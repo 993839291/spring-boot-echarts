@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.w3c.dom.ls.LSException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -239,5 +240,158 @@ public class IndexController {
         return "echarts";
     }
 
+    @RequestMapping("/echarts2")
+    public String myECharts2(Model model){
 
+        String skirt = "裙子";
+        int nums = 30;
+        List<Integer> listY = new ArrayList<>();
+        List<Integer> listX = new ArrayList<>();
+        List<Integer> listY1 = new ArrayList<>();
+        int tenNum = 0;
+        for(int i=1;i<=10;i++){
+            int num=(int)(Math.random()*16+1);
+            if(i<=9){
+                listY.add(oddOrEven(num)?2:1);
+                listY1.add(isMax(num)?4:3);
+                listX.add(i);
+            }else{
+                tenNum = num;
+            }
+        }
+        //如果是转折点，差距比较大的情况下，出现的次数少的为准
+        //能平分则平分
+        model.addAttribute("skirt", listX);
+        model.addAttribute("nums", listY);
+        model.addAttribute("nums1", listY1);
+        model.addAttribute("tenNum", tenNum);
+        return "echarts";
+    }
+
+
+    @RequestMapping("/myECharts3")
+    @ResponseBody
+    public Map<String,String> myECharts3(){
+        List<Integer> list = indexMapper.getList();
+        int lastNum = 0;
+        int nextNum = 0;
+        int count1 = 0;
+        int count2 = 0;
+        int count3 = 0;
+        int count4 = 0;
+        for(int i=0;i<=list.size()-1;i++){
+            if(i>=1){
+                nextNum = list.get(i);
+                lastNum = list.get(i-1);
+                if(oddOrEven(nextNum)==oddOrEven(lastNum)){
+                    System.out.println(lastNum+"-"+nextNum+"-111111111111111111111111111111111111");
+                    count1 = count1 + 1;
+                }else{
+                    count2 = count2 + 1;
+                    System.out.println(lastNum+"-"+nextNum+"-222222222222222222222222222222222222");
+                }
+
+                if(isMax(nextNum)==isMax(lastNum)){
+                    count3 = count3 + 1;
+                }else{
+                    count4 = count4 + 1;
+                }
+            }
+        }
+        System.out.println(count1+"......................."+count2);
+        System.out.println(count3+"......................."+count4);
+        Map<String,String> result = new HashMap<>();
+        result.put("oddOrEven",count1+"......................."+count2);
+        result.put("minOrMax",count3+"......................."+count4);
+        return result;
+    }
+
+    /**
+     * 奇数偶数
+     * @param a
+     * @return
+     */
+    public static boolean oddOrEven(int a) {
+        if (a % 2 != 0) {
+            //奇数
+            return false;
+        } else {
+            //偶数
+            return true;
+        }
+    }
+
+    /**
+     * 奇数偶数
+     * @param a
+     * @return
+     */
+    public static boolean isMax(int a) {
+        if (a<9) {
+            //奇数
+            return false;
+        } else {
+            //偶数
+            return true;
+        }
+    }
+
+    public static void main(String[] args) {
+        int count = 10000;
+        List<Integer> list = new ArrayList<>();
+        for(int i=1;i<=count;i++){
+            int num = (int)(Math.random()*16+1);
+            list.add(num);
+        }
+
+        int lastNum = 0;
+        int nowNum = 0;
+        int count1 = 0;
+        int count2 = 0;
+        int count3 = 0;
+        int count4 = 0;
+        for(int i=0;i<=list.size()-1;i++){
+            if(i>=1){
+                nowNum = list.get(i);
+                lastNum = list.get(i-1);
+                List<Integer> hitList = getHitList(oddOrEven(lastNum),!isMax(lastNum));
+                if(hitList.contains(nowNum)){
+                    count1 =  count1 + 1;
+                }else{
+                    count2 =  count2 + 1;
+                }
+            }
+        }
+        System.out.println(count1);
+    }
+
+    public static List<Integer> getHitList(boolean even,boolean max){
+        List<Integer> hitList = new ArrayList<>();
+        if(even){
+            if(max){
+                for(int i=5;i<=8;i++){
+                    int temp = 2*i;
+                    hitList.add(temp);
+                }
+            }else{
+                for(int i=1;i<=4;i++){
+                    int temp = 2*i;
+                    hitList.add(temp);
+                }
+            }
+        }else{
+            if(max){
+                for(int i=5;i<=8;i++){
+                    int temp = 2*i-1;
+                    hitList.add(temp);
+                }
+            }else{
+                for(int i=1;i<=4;i++){
+                    int temp = 2*i-1;
+                    hitList.add(temp);
+                }
+            }
+        }
+        return hitList;
+    }
 }

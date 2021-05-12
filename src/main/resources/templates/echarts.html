@@ -17,6 +17,8 @@
 
 <input type="hidden" th:value="${skirt}" id="skirt"/>
 <input type="hidden" th:value="${nums}" id="nums"/>
+<input type="hidden" th:value="${nums1}" id="nums1"/>
+<input type="hidden" th:value="${tenNum}" id="tenNum"/>
 
 
 <script type="text/javascript">
@@ -25,8 +27,8 @@
 
     var skirt=$("#skirt").val();
     var nums=$("#nums").val();
+    var nums1=$("#nums1").val();
 
-    console.info();
 
     // 指定图表的配置项和数据
     var option = {
@@ -35,18 +37,26 @@
         },
         tooltip: {},
         legend: {
-            data:['销量']
+            data:['oddOrEven','minOrMax']
         },
         xAxis: {
             data: JSON.parse(skirt)
         },
         yAxis: {},
-        series: [{
-            name: '销量',
-            type: 'bar',
-            data: JSON.parse(nums),
-            showAllSymbol: true
-        }]
+        series: [
+            {
+                name: 'oddOrEven',
+                type: 'bar',
+                data: JSON.parse(nums),
+                showAllSymbol: true
+            },
+            {
+                name: 'minOrMax',
+                type: 'bar',
+                data: JSON.parse(nums1),
+                showAllSymbol: true
+            }
+        ]
     };
 
     // 使用刚指定的配置项和数据显示图表。
